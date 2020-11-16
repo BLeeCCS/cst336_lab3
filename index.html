@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1> Sign Up </h1>
-    <form action="welcome.html">
+    <form id="signupForm" action="welcome.html">
     First Name: <input type="text" name="fName"><br>
     Last Name: <input type="text" name="lName"><br>
     Gender: <input type="radio" name="gender" value="m"> Male <br>
@@ -34,11 +34,15 @@
                       <span id="usernameError"></span><br>
     
     Password: <input type="password" id="password" name="password"><br>
+              <span id="passwordAtleast6"></span><br>
     Password Again: <input type="password" id="passwordAgain">
+                    <span id="passwordAgainError"></span> <br /><br>
     
     <input type="submit" value="Sign up!">
     </form>
     <script>
+        var usernameAvailable = false;
+    
         $("#zip").on("change", async function(){
             let zipCode = $("#zip").val();
             let url = `https://itcdland.csumb.edu/~milara/ajax/cityInfoByZip?zip=${zipCode}`;
@@ -70,11 +74,43 @@
             if (data.available) {
                 $("#usernameError").html("Username available!");
                 $("#usernameError").css("color","green");
+                usernameAvailable = true;
             } else {
                 $("#usernameError").html("Username not available!");
                 $("#usernameError").css("color","red");
+                usernameAvailable = false;
             }
         })
+        
+        $("#signupForm").on("submit", function(e) {
+            if (!isFormValid()){
+              e.preventDefault();  
+            };
+        })
+            
+        function isFormValid() {
+            isValid = true;
+            if (!usernameAvailable) {
+                isValid = false;
+            }
+            
+            if ($("#username").val().length == 0) {
+                isValid = false;
+                $("#usernameError").html("Username is required");
+            }
+            
+            if ($("#password").val() != $("#passwordAgain").val()) {
+                $("#passwordAgainError").html("Password Mistmatch!");
+                isValid = false;
+            }
+            
+            if ($("#password").val().length < 6) {
+                $("#passwordAtleast6").html("Password needs at least 6 characters!");
+                isValid = false;
+            }
+            
+            return isValid;
+        }
     </script>
 </body>
 </html>
